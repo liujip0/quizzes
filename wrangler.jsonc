@@ -20,4 +20,11 @@
     "traces": { "enabled": true, "persist": true, "head_sampling_rate": 1 },
   },
   "placement": { "mode": "smart" },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "quizzes-db",
+      "database_id": "e619d186-5648-47cd-a9c6-b5578ce52ccc",
+    },
+  ],
 }
