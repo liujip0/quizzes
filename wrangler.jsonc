@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "flags-quiz",
+  "name": "quizzes",
   // Set this to today's date
   "compatibility_date": "2026-06-23",
   "assets": {
