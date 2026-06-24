@@ -1,8 +1,8 @@
-import zod from "zod";
-import { publicProcedure } from "../trpc.ts";
 import { TRPCError } from "@trpc/server";
 import * as argon2 from "node-argon2";
-import jwt from "jsonwebtoken";
+import zod from "zod";
+import { publicProcedure } from "../trpc.ts";
+import { generateToken } from "./tokens.ts";
 
 export const signup = publicProcedure
   .input(zod.object({ username: zod.string(), password: zod.string() }))
@@ -22,8 +22,8 @@ export const signup = publicProcedure
     // * Hash params: https://www.rfc-editor.org/rfc/rfc9106.html#name-parameter-choice
     const hash = await argon2.hash(input.password);
 
-    // Used to invalidate already issued session tokens if needed
-    const secret = crypto.getRandomValues(new Uint8Array(8)); // 64 bits
+    // Used to invalidate already-issued session tokens if needed
+    const secret = crypto.getRandomValues(new Uint8Array(8)).toBase64(); // 64 bits
 
     const stmt = await DB.prepare(
       "INSERT INTO Users (username, password, secret) VALUES (?, ?, ?)",
@@ -38,11 +38,5 @@ export const signup = publicProcedure
       });
     }
 
-    const token = jwt.sign(
-      { user: input.username, secret: secret.toBase64() },
-      JWT_SECRET,
-      { expiresIn: "7d" },
-    );
-
-    return token;
+    return generateToken(input.username, secret, JWT_SECRET);
   });
